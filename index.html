@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QSell Margin Analyzer - Analiza Marżowości</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <header class="header">
+        <div class="logo-section">
+            <div class="logo">
+                <div class="logo-icon">
+                    <i class="fas fa-chart-line"></i>
+                </div>
+                <div class="logo-text">
+                    <h1>QSell</h1>
+                    <span>Margin Analyzer</span>
+                </div>
+            </div>
+        </div>
+        <div class="header-actions">
+            <button class="btn btn-secondary" onclick="clearData()">
+                <i class="fas fa-trash"></i> Wyczyść
+            </button>
+            <button class="btn btn-primary" onclick="generateMessage()">
+                <i class="fas fa-magic"></i> Generuj Wiadomość
+            </button>
+        </div>
+    </header>
+
+    <main class="container">
+        <section class="input-section">
+            <div class="form-group">
+                <label for="date">Data analizy:</label>
+                <input type="date" id="date" name="date" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="clientName">Nazwa klienta:</label>
+                <input type="text" id="clientName" name="clientName" placeholder="np. tdstones" required>
+            </div>
+
+            <div class="form-group">
+                <label for="tradeWatchData">Dane z TradeWatch (wklej całą tabelę):</label>
+                <textarea id="tradeWatchData" name="tradeWatchData" rows="15" placeholder="Wklej tutaj dane z TradeWatch..."></textarea>
+            </div>
+
+            <div class="form-group">
+                <label for="presentationLink">Link do prezentacji (opcjonalnie):</label>
+                <input type="url" id="presentationLink" name="presentationLink" placeholder="https://...">
+            </div>
+        </section>
+
+        <section class="output-section" id="outputSection" style="display: none;">
+            <h2>Wygenerowana wiadomość do Slack:</h2>
+            <div class="message-preview">
+                <textarea id="generatedMessage" rows="20" readonly></textarea>
+                <div class="message-actions">
+                    <button class="btn btn-primary" onclick="copyToClipboard()">
+                        <i class="fas fa-copy"></i> Kopiuj do schowka
+                    </button>
+                    <button class="btn btn-secondary" onclick="editMessage()">
+                        <i class="fas fa-edit"></i> Edytuj
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <section class="preview-section" id="previewSection" style="display: none;">
+            <h2>Podgląd danych:</h2>
+            <div class="data-preview">
+                <div class="preview-stats">
+                    <div class="stat-card">
+                        <div class="stat-icon">
+                            <i class="fas fa-box"></i>
+                        </div>
+                        <div class="stat-content">
+                            <h3 id="productCount">0</h3>
+                            <p>Produktów</p>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">
+                            <i class="fas fa-percentage"></i>
+                        </div>
+                        <div class="stat-content">
+                            <h3 id="avgCost">0%</h3>
+                            <p>Średni koszt</p>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">
+                            <i class="fas fa-chart-pie"></i>
+                        </div>
+                        <div class="stat-content">
+                            <h3 id="totalShare">0%</h3>
+                            <p>Łączny udział</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="products-table">
+                    <table id="productsTable">
+                        <thead>
+                            <tr>
+                                <th>ID Produktu</th>
+                                <th>Koszt sprzedaży</th>
+                                <th>Udział w sprzedaży</th>
+                            </tr>
+                        </thead>
+                        <tbody id="productsTableBody">
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <div id="notification" class="notification"></div>
+
+    <script src="script.js"></script>
+</body>
+</html>
