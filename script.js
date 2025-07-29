@@ -30,6 +30,7 @@ class QSellMarginAnalyzer {
         document.getElementById('date').value = `${year}-${month}-${day}`;
     }
 
+    // --- TU JEST NOWA FUNKCJA ---
     parseTradeWatchData() {
         const data = document.getElementById('tradeWatchData').value;
         if (!data.trim()) {
@@ -49,30 +50,25 @@ class QSellMarginAnalyzer {
             if (productIdMatch) {
                 const productId = productIdMatch[0];
                 
-                // Szukamy linii z kosztem i udziałem (linia z dwoma procentami)
-                let cost = null;
-                let share = null;
-                
-                // Sprawdzamy kilka następnych linii
-                for (let j = i; j < Math.min(i + 10, lines.length); j++) {
+                // Szukamy linii z procentami w następnych liniach
+                for (let j = i + 1; j < Math.min(i + 15, lines.length); j++) {
                     const checkLine = lines[j].trim();
                     
-                    // Szukamy linii z dwoma procentami
-                    const percentages = checkLine.match(/(\d+,\d+)\s*%/g);
-                    if (percentages && percentages.length >= 2) {
-                        // Pierwszy procent to udział, drugi to koszt
-                        share = parseFloat(percentages[0].replace(',', '.'));
-                        cost = parseFloat(percentages[percentages.length - 1].replace(',', '.'));
-                        break;
+                    // Szukamy linii z dwoma procentami (udział i koszt)
+                    if (checkLine.includes('%') && checkLine.includes('-')) {
+                        const percentages = checkLine.match(/(\d+,\d+)\s*%/g);
+                        if (percentages && percentages.length >= 2) {
+                            const share = parseFloat(percentages[0].replace(',', '.'));
+                            const cost = parseFloat(percentages[percentages.length - 1].replace(',', '.'));
+                            
+                            this.products.push({
+                                id: productId,
+                                cost: cost,
+                                share: share
+                            });
+                            break;
+                        }
                     }
-                }
-                
-                if (cost !== null && share !== null) {
-                    this.products.push({
-                        id: productId,
-                        cost: cost,
-                        share: share
-                    });
                 }
             }
         }
@@ -82,6 +78,7 @@ class QSellMarginAnalyzer {
         
         this.updatePreview();
     }
+    // --- KONIEC NOWEJ FUNKCJI ---
 
     updatePreview() {
         const previewSection = document.getElementById('previewSection');
