@@ -49,22 +49,30 @@ class QSellMarginAnalyzer {
             if (productIdMatch) {
                 const productId = productIdMatch[0];
                 
-                // Szukamy kosztu sprzedaży (ostatni % w linii)
-                const costMatch = line.match(/(\d+,\d+)\s*%$/);
-                if (costMatch) {
-                    const cost = costMatch[1];
+                // Szukamy linii z kosztem i udziałem (linia z dwoma procentami)
+                let cost = null;
+                let share = null;
+                
+                // Sprawdzamy kilka następnych linii
+                for (let j = i; j < Math.min(i + 10, lines.length); j++) {
+                    const checkLine = lines[j].trim();
                     
-                    // Szukamy udziału w sprzedaży (przedostatni % w linii)
-                    const shareMatch = line.match(/(\d+,\d+)\s*%\s*[^-]*-\d+,\d+/);
-                    if (shareMatch) {
-                        const share = shareMatch[1];
-                        
-                        this.products.push({
-                            id: productId,
-                            cost: parseFloat(cost.replace(',', '.')),
-                            share: parseFloat(share.replace(',', '.'))
-                        });
+                    // Szukamy linii z dwoma procentami
+                    const percentages = checkLine.match(/(\d+,\d+)\s*%/g);
+                    if (percentages && percentages.length >= 2) {
+                        // Pierwszy procent to udział, drugi to koszt
+                        share = parseFloat(percentages[0].replace(',', '.'));
+                        cost = parseFloat(percentages[percentages.length - 1].replace(',', '.'));
+                        break;
                     }
+                }
+                
+                if (cost !== null && share !== null) {
+                    this.products.push({
+                        id: productId,
+                        cost: cost,
+                        share: share
+                    });
                 }
             }
         }
